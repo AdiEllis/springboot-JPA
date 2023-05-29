@@ -1,7 +1,10 @@
 package com.example.springbootJPA.Models;
 
+import com.example.springbootJPA.Entities.BasicResponseModel;
+import com.example.springbootJPA.Repositories.EmployeeRepository;
+import com.example.springbootJPA.Utils.Definition;
+import com.example.springbootJPA.Utils.ObjectValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +18,33 @@ public class EmployeeDao {
     @Autowired
     private EmployeeRepository repository;
 
-    public void add(Employee employee) {
-        repository.save(employee);
+    @Autowired
+    private ObjectValidator objectValidator;
+
+    public BasicResponseModel add(Employee employee) {
+        BasicResponseModel response;
+        if (!objectValidator.isEmployeeObjectValid(employee)) {
+            response = new BasicResponseModel(Definition.MISSING_FIELDS_ERROR_CODE, Definition.MISSING_FIELDS_MESSAGE);
+        }
+        else if (!objectValidator.isEmployeeNumberValid(employee.getEmployeeNumber())) {
+            response = new BasicResponseModel(Definition.INVALID_EMPLOYEE_NUMBER_ERROR_CODE, Definition.INVALID_EMPLOYEE_NUMBER_MESSAGE);
+        } else {
+            repository.save(employee);
+            response = new BasicResponseModel(employee);
+        }
+        return response;
     }
 
-    public void delete(Integer id) {
+    public BasicResponseModel delete(Integer id) {
+        BasicResponseModel response;
         Optional<Employee> employee = repository.findById(id);
-        employee.ifPresent(value -> repository.delete(value));
+        if (employee.isPresent()) {
+            repository.delete(employee.get());
+            response = new BasicResponseModel("Employee " + id + " was deleted");
+        } else {
+            response = new BasicResponseModel(Definition.EMPLOYEE_NOT_FOUND_ERROR_CODE, Definition.EMPLOYEE_NOT_FOUND_MESSAGE);
+        }
+        return response;
     }
 
     public List<Employee> getAll() {

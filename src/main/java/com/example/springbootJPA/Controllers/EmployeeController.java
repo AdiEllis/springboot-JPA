@@ -1,5 +1,6 @@
 package com.example.springbootJPA.Controllers;
 
+import com.example.springbootJPA.Entities.BasicResponseModel;
 import com.example.springbootJPA.Models.Employee;
 import com.example.springbootJPA.Models.EmployeeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +15,13 @@ public class EmployeeController {
     private EmployeeDao employeeDao;
 
     @PostMapping("/employee/add")
-    public void addEmployee(Employee employee) {
-        employeeDao.add(employee);
-        System.out.println("Employee added");
+    public BasicResponseModel addEmployee(Employee employee) {
+        return employeeDao.add(employee);
     }
 
     @PostMapping("/employee/delete")
-    public void deleteEmployee(Integer id) {
-        employeeDao.delete(id);
-        System.out.println("Employee deleted");
+    public BasicResponseModel deleteEmployee(Integer id) {
+        return employeeDao.delete(id);
     }
 
     @GetMapping("/employee/getAll")

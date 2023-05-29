@@ -1,9 +1,6 @@
 package com.example.springbootJPA.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Employee {
@@ -14,6 +11,10 @@ public class Employee {
     private  String name;
     private String employeeNumber;
     private String branch;
+
+    @ManyToOne
+    @JoinColumn(name = "companyID")
+    private Company company;
 
     public Integer getId() {
         return id;
@@ -47,6 +48,11 @@ public class Employee {
         this.branch = branch;
     }
 
+    public Company getCompany() {
+        return company;
+    }
 
-
+    public void setCompany(Company company) {
+        this.company = company;
+    }
 }
